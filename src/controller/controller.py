@@ -1,6 +1,6 @@
 import logging
 
-from src.opensearch.initialize import opensearch
+from src.services.searchServices import SearchServices
 from src.services.frequentWordServices import FrequentWordsServices
 from src.services.getServices import GetServices
 
@@ -16,15 +16,19 @@ class Controller:
         if data.error:
             return data
 
-        # Extract and return the relevant search results
-        # hits = response['hits']['hits']
-
         # DTO for the object
         return Conv.dto_get_object(data)
 
     @staticmethod
-    async def search():
-        pass
+    async def search(search_or: str, search_and: str):
+        parameters_with_or_conditions = string_to_array(search_or)
+        parameters_with_and_conditions = string_to_array(search_and)
+
+        data: ResponseModel = await SearchServices.search(parameters_with_or_conditions, parameters_with_and_conditions)
+        if data.error:
+            return data
+
+        return Conv.dto_search(data)
 
     @staticmethod
     async def get_frequent_words(count: int) -> [FrequentWordsModel]:
@@ -34,3 +38,10 @@ class Controller:
 
         # DTO for the object
         return Conv.dto_frequent_word_object(data)
+
+
+def string_to_array(data: str) -> list:
+    if data == "" or data is None:
+        return []
+    else:
+        return [x.lstrip().rstrip() for x in data.split(",")]

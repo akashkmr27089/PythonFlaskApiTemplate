@@ -26,8 +26,9 @@ async def get_paragraph(nos_of_para: int = Query(1), nos_of_sentence: int = Quer
 
 # Get The Response from the Opensearch
 @app.get("/search")
-def search(query: str = Query(None)):
-    return await Controller.search()
+async def search(search_or: str = Query(None), search_and: str = Query(None)):
+    return await Controller.search(search_or, search_and)
+
 
 
 # Get Frequent Word from the Opensearch

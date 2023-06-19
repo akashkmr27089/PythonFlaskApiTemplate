@@ -24,3 +24,7 @@ class Conv:
     @staticmethod
     def dto_get_object(data: ResponseModel):
         return data
+
+    @staticmethod
+    def dto_search(data: ResponseModel):
+        return data

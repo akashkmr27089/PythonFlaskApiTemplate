@@ -1,5 +1,3 @@
-import logging
-
 from src.integrations.metaphorpsum import Metaphorsum
 from src.opensearch.dao import OpensearchDao
 from src.util import ResponseModel

@@ -1,7 +1,11 @@
+import os
 
 from src.opensearch.constant import INDEX_PARA_DATA, INDEX_PARA_DATA_MODEL, TOKENS_KEYWORD, TOKENS_AGGREGATION_QUERY
 from src.opensearch.initialize import opensearch
 import logging
+
+from src.opensearch.query import query_generator
+from src.util import ResponseModel
 
 
 class OpensearchDao:
@@ -47,8 +51,43 @@ class OpensearchDao:
 
         return True
 
-    def search(self, search_params):
-        pass
+    @staticmethod
+    def search_with_params(conditions_with_or_operator: [str], conditions_with_and_operator: [str]) -> ResponseModel:
+        out_resp = ResponseModel()
+        try:
+            query = query_generator(conditions_with_or_operator, conditions_with_and_operator, "text_data")
+
+            search_query = {
+                "_source": ["text_data", "_id"],
+                "size": os.getenv("DEFAULT_ENTRY_PER_PAGE"),
+                "query": {
+                    "query_string": {
+                        "query": query
+                    }
+                }
+            }
+            logging.info("generated_query", search_query)
+            response = opensearch.search(index=INDEX_PARA_DATA, body=search_query)
+
+            # Process the search results
+            out = []
+            for hit in response['hits']['hits']:
+                # Access the desired field from the hit
+                elem = hit['_source']
+                if "text_data" in elem:
+                    out.append({
+                        "id": hit['_id'],
+                        "text": elem["text_data"]
+                    })
+
+            out_resp.data = out
+
+        except Exception as ex:
+            logging.warning("Some issues with the Opensearch Search", ex)
+            out_resp.error = True
+            out_resp.message = "Some issues with the Opensearch Search"
+
+        return out_resp
 
     @staticmethod
     def get_frequent_words(size: int) -> []:
@@ -74,5 +113,3 @@ class OpensearchDao:
         aggregation_results = response["aggregations"]["aggregation_name"]["buckets"]
 
         return aggregation_results
-
-
