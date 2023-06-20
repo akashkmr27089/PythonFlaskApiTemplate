@@ -4,13 +4,17 @@ import os
 import uvicorn
 import logging
 import src.opensearch.initialize
+from src.opensearch.initialize import check_opensearch_status
 import src.setup.logging.logging
 from src.opensearch.dao import OpensearchDao
 from src.controller.controller import Controller
 
 # Load the variables from .env file
 load_dotenv()
+logging.info(os.getenv("OPENSEARCH_HOST"))
+
 if os.getenv("MIGRATION"):
+    check_opensearch_status()
     OpensearchDao.migration()
 
 app = FastAPI()
@@ -28,7 +32,6 @@ async def get_paragraph(nos_of_para: int = Query(1), nos_of_sentence: int = Quer
 @app.get("/search")
 async def search(search_or: str = Query(None), search_and: str = Query(None)):
     return await Controller.search(search_or, search_and)
-
 
 
 # Get Frequent Word from the Opensearch

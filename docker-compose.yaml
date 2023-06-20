@@ -35,6 +35,23 @@ services:
     networks:
       - opensearch-net
 
+  portcase:
+    build: .
+    environment:
+      OPENSEARCH_HOST: https://opensearch:9200
+      OPENSEARCH_USERNAME: admin
+      OPENSEARCH_PASSWORD: admin
+      DEFAULT_ENTRY_PER_PAGE: 20
+      PORT: 8000
+      HOST: 0.0.0.0
+      MIGRATION: True
+    ports:
+      - "8000:8000"
+    networks:
+      - opensearch-net
+    depends_on:
+      - opensearch
+      - opensearch-dashboards
 volumes:
   opensearch-data:
 

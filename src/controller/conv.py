@@ -17,7 +17,8 @@ class Conv:
                 out_elem.meanings = dat['meanings']
                 out.append(out_elem)
             else:
-                logging.warning("Issue while getting meaning for a word", i["message"])
+                pass
+                # logging.warning("Issue while getting meaning for a word", i["message"])
 
         return out
 
