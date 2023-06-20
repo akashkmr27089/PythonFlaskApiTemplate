@@ -20,7 +20,7 @@ class FrequentWordWorker:
                 FrequentWordWorker.process_frequent_words()
 
     @staticmethod
-    def process_frequent_words() -> ResponseModel:
+    def process_frequent_words(params) -> ResponseModel:
         out = ResponseModel()
 
         # Call Frequent Worker from Opensearch

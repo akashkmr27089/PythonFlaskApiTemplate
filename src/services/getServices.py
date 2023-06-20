@@ -13,6 +13,7 @@ from src.pgdb.initialize import Session, get_session
 
 from src.worker.paragraph_worker import global_queue
 from src.worker.frequent_word_worker import global_queue_fww
+from src.worker.worker import queue
 
 
 class GetServices:
@@ -41,8 +42,11 @@ class GetServices:
         if pgdb_data_created_id.error:
             return pgdb_data_created_id
 
-        global_queue.append([pgdb_data_created_id.data, paragraph_data])
-        global_queue_fww.append(pgdb_data_created_id.data)
+        # global_queue.append([pgdb_data_created_id.data, paragraph_data])
+        # global_queue_fww.append(pgdb_data_created_id.data)
+
+        queue.append({"name": "paragraph", "data": [pgdb_data_created_id.data, paragraph_data]})
+        queue.append({"name": "frequent_word", "data": [pgdb_data_created_id.data, paragraph_data]})
 
         out.data = paragraph_data
         return out

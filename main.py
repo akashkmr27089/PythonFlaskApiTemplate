@@ -15,6 +15,8 @@ from src.controller.controller import Controller
 from src.worker.paragraph_worker import ParagraphWorker
 from src.worker.frequent_word_worker import FrequentWordWorker
 
+from src.worker.worker import Worker
+
 # Load the variables from .env file
 load_dotenv()
 logging.info(os.getenv("OPENSEARCH_HOST"))
@@ -27,6 +29,9 @@ if os.getenv("MIGRATION"):
     check_opensearch_status()
     OpensearchDao.migration()
 
+Worker.register_worker("paragraph", ParagraphWorker.process_paragraph)
+Worker.register_worker("frequent_word", FrequentWordWorker.process_frequent_words)
+
 
 app = FastAPI()
 
@@ -37,7 +42,10 @@ app = FastAPI()
 async def get_paragraph(background_tasks: BackgroundTasks, nos_of_para: int = Query(1),
                         nos_of_sentence: int = Query(50)):
     # background_tasks.add_task(ParagraphWorker.worker_function)
-    background_tasks.add_task(FrequentWordWorker.worker_function)
+    # background_tasks2.add_task(FrequentWordWorker.worker_function)
+
+    background_tasks.add_task(Worker.worker_function)
+
     return await Controller.get(nos_of_para, nos_of_sentence)
 
 
@@ -61,5 +69,5 @@ def pong():
 
 
 if __name__ == "__main__":
-    logging.info("Starting server at port 8000")
+    logging.info("Starting server at port {}".format(os.getenv("HOST")))
     uvicorn.run(app, host=os.getenv("HOST"), port=int(os.getenv("PORT")))

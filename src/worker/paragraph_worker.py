@@ -13,7 +13,7 @@ class ParagraphWorker:
             if global_queue:
                 params = global_queue.pop(0)  # Get parameters from the queue
                 # Execute the function using the parameters
-                ParagraphWorker.process_opensearch(params)
+                ParagraphWorker.process_paragraph(params)
 
     @staticmethod
     def process_params(params):
@@ -26,7 +26,7 @@ class ParagraphWorker:
         return [x for x in paragraph.split(" ")]
 
     @staticmethod
-    def process_opensearch(params) -> ResponseModel:
+    def process_paragraph(params) -> ResponseModel:
         out = ResponseModel()
 
         if len(params) == 2:
