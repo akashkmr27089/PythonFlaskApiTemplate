@@ -1,5 +1,8 @@
 # PythonFlaskApiTemplate
 
+<img width="854" alt="image" src="https://github.com/akashkmr27089/PythonFlaskApiTemplate/assets/25488501/5defec6c-6874-44f9-98bc-2609aea79fe0">
+
+
 ## Get Frequent Words
 curl --location 'http://0.0.0.0:8000/dictionary'
 
