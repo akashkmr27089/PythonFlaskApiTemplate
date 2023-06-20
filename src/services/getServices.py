@@ -1,13 +1,30 @@
+import logging
+import time
+from typing import Dict
+
 from src.integrations.metaphorpsum import Metaphorsum
+from src.models.paragraph import Paragraph
 from src.opensearch.dao import OpensearchDao
+from src.pgdb.Dao.paragraph import ParagraphDao
 from src.util import ResponseModel
+from fastapi import BackgroundTasks
+from src.models.frequent_words import FrequentWords
+from src.pgdb.initialize import Session, get_session
+
+from src.worker.paragraph_worker import global_queue
+from src.worker.frequent_word_worker import global_queue_fww
 
 
 class GetServices:
-
     @staticmethod
-    def generate_tokens(paragraph):
-        return [x for x in paragraph.split(" ")]
+    def create_frequent_words(id_primary, words: list) -> Dict:
+        session = get_session()
+        frequent_words = FrequentWords(words=words)
+        session.add(frequent_words)
+        session.commit()
+        session.close()
+
+        return frequent_words
 
     @staticmethod
     async def get_new_paragraph(nos_of_paragraph, nos_of_sentence) -> ResponseModel:
@@ -19,13 +36,13 @@ class GetServices:
 
         # Save the Data Onto Opensearch
         paragraph_data = para_response.data
-        token_data = GetServices.generate_tokens(paragraph_data)
 
-        if_entry_created = OpensearchDao.create(paragraph_data, token_data)
-        if not if_entry_created:
-            out.error = True
-            out.message = "Object not created in Opensearch"
-            return out
+        pgdb_data_created_id = ParagraphDao.create(paragraph_data)
+        if pgdb_data_created_id.error:
+            return pgdb_data_created_id
+
+        global_queue.append([pgdb_data_created_id.data, paragraph_data])
+        global_queue_fww.append(pgdb_data_created_id.data)
 
         out.data = paragraph_data
         return out

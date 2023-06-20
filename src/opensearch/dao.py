@@ -33,8 +33,9 @@ class OpensearchDao:
             logging.error("Error while Creating index" + INDEX_PARA_DATA, err)
 
     @staticmethod
-    def create(text_data, tokens) -> bool:
+    def create(index, text_data, tokens) -> bool:
         document_data = {
+            "text_id": index,
             "text_data": text_data,
             "tokens_data": tokens,
             # Add more fields and their values as needed
@@ -91,7 +92,6 @@ class OpensearchDao:
 
     @staticmethod
     def get_frequent_words(size: int) -> []:
-
         # Define the index name
 
         # Define the aggregation query
