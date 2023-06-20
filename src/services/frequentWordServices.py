@@ -1,4 +1,7 @@
+import logging
+
 from src.opensearch.dao import OpensearchDao
+from src.pgdb.Dao.frequent_words import FrequentWordsDao
 from src.util import ResponseModel
 from src.integrations.dictionary import Dictionary
 
@@ -6,7 +9,7 @@ from src.integrations.dictionary import Dictionary
 class FrequentWordsServices:
 
     @staticmethod
-    async def get_frequent_words(size: int) -> ResponseModel:
+    def get_frequent_words(size: int) -> ResponseModel:
         # use opensearch integration to fetch most frequent words
         wordlist = OpensearchDao.get_frequent_words(size)
         word_list_data = []
@@ -18,6 +21,22 @@ class FrequentWordsServices:
         return response
 
     @staticmethod
+    def get_frequent_words2() -> ResponseModel:
+        # use opensearch integration to fetch most frequent words
+        wordlist = FrequentWordsDao.get_latest_entry()
+        word_list_data = []
+        out = ResponseModel()
+
+        if wordlist.words != "":
+            wordlist = wordlist.words.split(',')
+
+            for i in wordlist:
+                word_list_data.append(i)
+                out.data = word_list_data
+
+        return out
+
+    @staticmethod
     async def get_dictionary_words(words: list) -> ResponseModel:
         # use opensearch integration to fetch most frequent words
         response = ResponseModel()
@@ -26,22 +45,20 @@ class FrequentWordsServices:
         else:
             data: ResponseModel = await Dictionary.get_dictionary_meanings_by_words(words)
             if data.error:
-                pass
+                logging.info("Error at func get_dictionary_words")
+                return data
 
         return data
 
     @staticmethod
-    async def get_frequent_words_with_meaning(count: int) -> ResponseModel:
-        words = await FrequentWordsServices.get_frequent_words(count)
+    async def get_frequent_words_with_meaning() -> ResponseModel:
+        words = FrequentWordsServices.get_frequent_words2()
         if words.error:
-            pass
+            return words
 
         words_with_meaning: ResponseModel = await FrequentWordsServices.get_dictionary_words(words.data)
         if words.error:
-            pass
+            return words_with_meaning
 
         # Pass it through dto
         return words_with_meaning
-
-
-

@@ -31,8 +31,8 @@ class Controller:
         return Conv.dto_search(data)
 
     @staticmethod
-    async def get_frequent_words(count: int) -> [FrequentWordsModel]:
-        data: ResponseModel = await FrequentWordsServices.get_frequent_words_with_meaning(count)
+    async def get_frequent_words() -> [FrequentWordsModel]:
+        data: ResponseModel = await FrequentWordsServices.get_frequent_words_with_meaning()
         if data.error:
             return data
 
