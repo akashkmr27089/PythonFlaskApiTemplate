@@ -1,3 +1,5 @@
+import logging
+
 from src.opensearch.dao import OpensearchDao
 from src.pgdb.Dao.frequent_words import FrequentWordsDao
 from src.util import ResponseModel
@@ -43,7 +45,8 @@ class FrequentWordsServices:
         else:
             data: ResponseModel = await Dictionary.get_dictionary_meanings_by_words(words)
             if data.error:
-                pass
+                logging.info("Error at func get_dictionary_words")
+                return data
 
         return data
 
@@ -51,11 +54,11 @@ class FrequentWordsServices:
     async def get_frequent_words_with_meaning() -> ResponseModel:
         words = FrequentWordsServices.get_frequent_words2()
         if words.error:
-            pass
+            return words
 
         words_with_meaning: ResponseModel = await FrequentWordsServices.get_dictionary_words(words.data)
         if words.error:
-            pass
+            return words_with_meaning
 
         # Pass it through dto
         return words_with_meaning
