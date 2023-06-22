@@ -1,6 +1,7 @@
 # PythonFlaskApiTemplate
 
-<img width="854" alt="image" src="https://github.com/akashkmr27089/PythonFlaskApiTemplate/assets/25488501/5defec6c-6874-44f9-98bc-2609aea79fe0">
+<img width="719" alt="image" src="https://github.com/akashkmr27089/PythonFlaskApiTemplate/assets/25488501/51e42619-b61f-4452-add5-b9397c3a37f6">
+
 
 
 ## Get Frequent Words
