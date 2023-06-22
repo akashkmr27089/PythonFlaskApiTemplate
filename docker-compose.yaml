@@ -64,6 +64,8 @@ services:
       PG_DATABASE: mydatabase
       PG_USER: myuser
       PG_PASSWORD: mypassword
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     ports:
       - "8000:8000"
     networks:
@@ -71,6 +73,14 @@ services:
     depends_on:
       - opensearch
       - postgres-portcast
+      - redis
+
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+    networks:
+      - opensearch-net
 
 volumes:
   opensearch-data:

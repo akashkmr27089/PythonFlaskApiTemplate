@@ -1,7 +1,6 @@
 import logging
 
 import httpx
-from httpx import Response
 from src.util import ResponseModel
 
 
@@ -17,13 +16,25 @@ class Metaphorsum:
         base_url = "http://metaphorpsum.com/paragraphs/"
         url = base_url + str(nos_of_para) + "/" + str(no_of_sentence)
 
-        data = await httpx.AsyncClient().get(url)
+        try:
+            async with httpx.AsyncClient() as client:
+                data = await client.get(url, timeout=10)  # Set the timeout value as desired
 
-        if data.status_code == 200:
-            out.data = data.text
-        else:
+            if data.status_code == 200:
+                out.data = data.text
+            else:
+                out.error = True
+                out.message = "Some issue while getting paragraph"
+                logging.warning("Some issue while getting paragraph")
+
+        except httpx.TimeoutException:
             out.error = True
-            out.message = "Some issue while getting paragraph"
-            logging.warning("Some issue while getting paragraph")
+            out.message = "Timeout error occurred"
+            logging.warning("Timeout error occurred")
+
+        except httpx.NetworkError:
+            out.error = True
+            out.message = "Network error occurred"
+            logging.warning("Network error occurred")
 
         return out

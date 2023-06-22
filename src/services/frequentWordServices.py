@@ -23,16 +23,23 @@ class FrequentWordsServices:
     @staticmethod
     def get_frequent_words2() -> ResponseModel:
         # use opensearch integration to fetch most frequent words
-        wordlist = FrequentWordsDao.get_latest_entry()
         word_list_data = []
         out = ResponseModel()
 
-        if wordlist.words != "":
-            wordlist = wordlist.words.split(',')
+        try:
+            wordlist = FrequentWordsDao.get_latest_entry()
 
-            for i in wordlist:
-                word_list_data.append(i)
+            if wordlist.words != "":
+                wordlist = wordlist.words.split(',')
+
+                for i in wordlist:
+                    word_list_data.append(i.lower())
+
                 out.data = word_list_data
+        except Exception as ex:
+            out.error = True
+            out.message = "Some issue while getting frequent words"
+            logging.info(ex)
 
         return out
 
