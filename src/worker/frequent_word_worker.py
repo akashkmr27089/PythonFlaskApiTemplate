@@ -6,19 +6,8 @@ from src.pgdb.Dao.frequent_words import FrequentWordsDao
 from src.services.frequentWordServices import FrequentWordsServices
 from src.util import ResponseModel
 
-global_queue_fww = []
-
 
 class FrequentWordWorker:
-    @staticmethod
-    def worker_function():
-        while True:
-            if global_queue_fww:
-                time.sleep(1)
-                params = global_queue_fww.pop(0)
-                # Execute the function using the parameters
-                FrequentWordWorker.process_frequent_words()
-
     @staticmethod
     def process_frequent_words(params) -> ResponseModel:
         out = ResponseModel()

@@ -44,10 +44,10 @@ class OpensearchDao:
         response = opensearch.index(index=INDEX_PARA_DATA, body=document_data)
 
         if response["result"] == "created":
-            print("Document indexed successfully.")
+            logging.info("Document indexed successfully.")
             return True
         else:
-            print("Failed to index document.")
+            logging.warning("Failed to index document.")
             return False
 
         return True

@@ -6,6 +6,7 @@ import logging
 import src.opensearch.initialize
 import src.setup.logging.logging
 from src.models.models import pgdb_migration
+from src.redis.initialize import redis_client
 
 from src.pgdb.initialize import connect
 
@@ -41,9 +42,6 @@ app = FastAPI()
 @app.get("/get")
 async def get_paragraph(background_tasks: BackgroundTasks, nos_of_para: int = Query(1),
                         nos_of_sentence: int = Query(50)):
-    # background_tasks.add_task(ParagraphWorker.worker_function)
-    # background_tasks2.add_task(FrequentWordWorker.worker_function)
-
     background_tasks.add_task(Worker.worker_function)
 
     return await Controller.get(nos_of_para, nos_of_sentence)

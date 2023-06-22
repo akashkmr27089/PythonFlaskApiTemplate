@@ -24,7 +24,7 @@ def check_opensearch_status():
             else:
                 logging.warning("Trying to Connect to Opensearch")
         except Exception as e:
-            print("Failed to connect to OpenSearch:", str(e))
+            logging.info("Failed to connect to OpenSearch: {}".format(str(e)))
 
         # Wait for a certain period of time before retrying
         time.sleep(2)

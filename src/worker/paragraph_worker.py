@@ -3,23 +3,8 @@ import time
 from src.opensearch.dao import OpensearchDao
 from src.util import ResponseModel
 
-global_queue = []
-
 
 class ParagraphWorker:
-    @staticmethod
-    def worker_function():
-        while True:
-            if global_queue:
-                params = global_queue.pop(0)  # Get parameters from the queue
-                # Execute the function using the parameters
-                ParagraphWorker.process_paragraph(params)
-
-    @staticmethod
-    def process_params(params):
-        # Perform the desired processing logic with the parameters
-        time.sleep(2)
-        print(f"Processing params: {params}")
 
     @staticmethod
     def generate_tokens(paragraph):
